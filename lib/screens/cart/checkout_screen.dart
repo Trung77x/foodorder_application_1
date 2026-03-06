@@ -69,9 +69,9 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                     child: const Align(
                       alignment: Alignment.centerLeft,
                       child: Text(
-                        'TH3 - Ho Sy Trung - 2351160560',
+                        'Thanh Toán',
                         style: TextStyle(
-                          fontSize: 16,
+                          fontSize: 28,
                           fontWeight: FontWeight.w800,
                           color: Colors.white,
                           letterSpacing: 0.5,

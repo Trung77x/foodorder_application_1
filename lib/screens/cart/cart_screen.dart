@@ -32,11 +32,10 @@ class _CartScreenState extends State<CartScreen> {
                     elevation: 0,
                     pinned: true,
                     title: const Text(
-                      'TH3 - Ho Sy Trung - 2351160560',
+                      'Giỏ Hàng',
                       style: TextStyle(
                         fontWeight: FontWeight.w700,
                         color: Colors.white,
-                        fontSize: 13,
                       ),
                     ),
                     centerTitle: true,
@@ -98,9 +97,9 @@ class _CartScreenState extends State<CartScreen> {
                     16,
                   ),
                   child: const Text(
-                    'TH3 - Ho Sy Trung - 2351160560',
+                    'Giỏ Hàng',
                     style: TextStyle(
-                      fontSize: 18,
+                      fontSize: 32,
                       fontWeight: FontWeight.w800,
                       color: Colors.white,
                       letterSpacing: 0.5,
