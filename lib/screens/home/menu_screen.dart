@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import '../../models/food_model.dart';
 import '../../providers/food_provider.dart';
 import 'food_detail_screen.dart';
@@ -24,7 +23,6 @@ class _MenuScreenState extends State<MenuScreen> {
   @override
   Widget build(BuildContext context) {
     final foodProvider = Provider.of<FoodProvider>(context, listen: false);
-    final size = MediaQuery.of(context).size;
 
     return Scaffold(
       body: Container(
@@ -40,7 +38,7 @@ class _MenuScreenState extends State<MenuScreen> {
             // Custom AppBar
             SliverAppBar(
               expandedHeight: 120,
-              backgroundColor: Colors.transparent,
+              backgroundColor: Colors.orange.shade600,
               elevation: 0,
               pinned: true,
               flexibleSpace: FlexibleSpaceBar(
@@ -213,47 +211,16 @@ class _MenuScreenState extends State<MenuScreen> {
               ),
             ),
             const SliverToBoxAdapter(child: SizedBox(height: 16)),
-            // Food List
+            // Food Grid
             Consumer<FoodProvider>(
               builder: (context, provider, _) {
-                if (provider.isLoading) {
-                  return SliverToBoxAdapter(
-                    child: Center(
-                      child: Padding(
-                        padding: EdgeInsets.symmetric(
-                          vertical: size.height * 0.2,
-                        ),
-                        child: Column(
-                          children: [
-                            CircularProgressIndicator(
-                              valueColor: AlwaysStoppedAnimation<Color>(
-                                Colors.orange.shade600,
-                              ),
-                            ),
-                            const SizedBox(height: 16),
-                            Text(
-                              'Đang tải món ăn...',
-                              style: TextStyle(
-                                color: Colors.grey.shade600,
-                                fontSize: 16,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  );
-                }
-
                 final foods = provider.foods;
 
                 if (foods.isEmpty) {
                   return SliverToBoxAdapter(
                     child: Center(
                       child: Padding(
-                        padding: EdgeInsets.symmetric(
-                          vertical: size.height * 0.2,
-                        ),
+                        padding: const EdgeInsets.symmetric(vertical: 60),
                         child: Column(
                           children: [
                             Icon(
@@ -283,7 +250,7 @@ class _MenuScreenState extends State<MenuScreen> {
                     gridDelegate:
                         const SliverGridDelegateWithFixedCrossAxisCount(
                           crossAxisCount: 2,
-                          childAspectRatio: 0.95,
+                          childAspectRatio: 0.72,
                           crossAxisSpacing: 12,
                           mainAxisSpacing: 16,
                         ),
@@ -318,6 +285,7 @@ class FoodCard extends StatelessWidget {
       },
       child: Container(
         decoration: BoxDecoration(
+          color: Colors.white,
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
@@ -329,48 +297,48 @@ class FoodCard extends StatelessWidget {
         ),
         child: ClipRRect(
           borderRadius: BorderRadius.circular(16),
-          child: Material(
-            color: Colors.white,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Image with rating badge
-                Stack(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Image with rating badge
+              Expanded(
+                flex: 3,
+                child: Stack(
+                  fit: StackFit.expand,
                   children: [
-                    ClipRRect(
-                      borderRadius: const BorderRadius.only(
-                        topLeft: Radius.circular(16),
-                        topRight: Radius.circular(16),
-                      ),
-                      child: CachedNetworkImage(
-                        imageUrl: food.image,
-                        width: double.infinity,
-                        height: 140,
-                        fit: BoxFit.cover,
-                        placeholder: (context, url) => Container(
-                          width: double.infinity,
-                          height: 140,
+                    Image.network(
+                      food.image,
+                      fit: BoxFit.cover,
+                      loadingBuilder: (context, child, loadingProgress) {
+                        if (loadingProgress == null) return child;
+                        return Container(
                           color: Colors.orange.shade50,
                           child: Center(
                             child: CircularProgressIndicator(
                               strokeWidth: 2,
+                              value: loadingProgress.expectedTotalBytes != null
+                                  ? loadingProgress.cumulativeBytesLoaded /
+                                        loadingProgress.expectedTotalBytes!
+                                  : null,
                               valueColor: AlwaysStoppedAnimation<Color>(
                                 Colors.orange.shade300,
                               ),
                             ),
                           ),
-                        ),
-                        errorWidget: (context, url, error) => Container(
-                          width: double.infinity,
-                          height: 140,
+                        );
+                      },
+                      errorBuilder: (context, error, stackTrace) {
+                        return Container(
                           color: Colors.orange.shade50,
-                          child: Icon(
-                            Icons.restaurant_menu,
-                            size: 40,
-                            color: Colors.orange.shade200,
+                          child: Center(
+                            child: Icon(
+                              Icons.restaurant_menu,
+                              size: 40,
+                              color: Colors.orange.shade200,
+                            ),
                           ),
-                        ),
-                      ),
+                        );
+                      },
                     ),
                     Positioned(
                       top: 8,
@@ -407,9 +375,12 @@ class FoodCard extends StatelessWidget {
                     ),
                   ],
                 ),
-                // Content
-                Padding(
-                  padding: const EdgeInsets.all(12),
+              ),
+              // Content
+              Expanded(
+                flex: 2,
+                child: Padding(
+                  padding: const EdgeInsets.all(10),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -417,39 +388,36 @@ class FoodCard extends StatelessWidget {
                       Text(
                         food.name,
                         style: const TextStyle(
-                          fontSize: 14,
+                          fontSize: 13,
                           fontWeight: FontWeight.w700,
                           color: Colors.black87,
                         ),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                       ),
-                      const SizedBox(height: 4),
-                      Flexible(
-                        child: Text(
-                          food.description,
-                          style: TextStyle(
-                            fontSize: 11,
-                            color: Colors.grey.shade600,
-                            fontWeight: FontWeight.w500,
-                          ),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
+                      Text(
+                        food.description,
+                        style: TextStyle(
+                          fontSize: 11,
+                          color: Colors.grey.shade600,
+                          fontWeight: FontWeight.w400,
                         ),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
                       ),
                       Text(
-                        "${food.price.toInt().toStringAsFixed(0).replaceAll(RegExp(r'\.0+$'), '')} đ",
-                        style: const TextStyle(
+                        "${food.price.toInt()} đ",
+                        style: TextStyle(
                           fontSize: 15,
                           fontWeight: FontWeight.w800,
-                          color: Colors.orange,
+                          color: Colors.orange.shade700,
                         ),
                       ),
                     ],
                   ),
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       ),
