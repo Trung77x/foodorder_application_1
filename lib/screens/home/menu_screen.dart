@@ -64,9 +64,9 @@ class _MenuScreenState extends State<MenuScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         const Text(
-                          'Order Food',
+                          'TH3 - Ho Sy Trung - 2351160560',
                           style: TextStyle(
-                            fontSize: 32,
+                            fontSize: 18,
                             fontWeight: FontWeight.w800,
                             color: Colors.white,
                             letterSpacing: 0.5,

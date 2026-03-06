@@ -39,10 +39,11 @@ class _OrdersScreenState extends State<OrdersScreen> {
                     elevation: 0,
                     pinned: true,
                     title: const Text(
-                      'Đơn Hàng Của Tôi',
+                      'TH3 - Ho Sy Trung - 2351160560',
                       style: TextStyle(
                         fontWeight: FontWeight.w700,
                         color: Colors.white,
+                        fontSize: 13,
                       ),
                     ),
                     centerTitle: true,
@@ -116,9 +117,9 @@ class _OrdersScreenState extends State<OrdersScreen> {
                         child: const Align(
                           alignment: Alignment.centerLeft,
                           child: Text(
-                            'Đơn Hàng',
+                            'TH3 - Ho Sy Trung - 2351160560',
                             style: TextStyle(
-                              fontSize: 32,
+                              fontSize: 16,
                               fontWeight: FontWeight.w800,
                               color: Colors.white,
                               letterSpacing: 0.5,

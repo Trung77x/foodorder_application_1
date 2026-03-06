@@ -58,6 +58,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   expandedHeight: 140,
                   backgroundColor: Colors.orange.shade600,
                   elevation: 0,
+                  pinned: true,
+                  title: const Text(
+                    'TH3 - Ho Sy Trung - 2351160560',
+                    style: TextStyle(
+                      fontWeight: FontWeight.w700,
+                      color: Colors.white,
+                      fontSize: 13,
+                    ),
+                  ),
+                  centerTitle: true,
                   flexibleSpace: FlexibleSpaceBar(
                     background: Container(
                       decoration: BoxDecoration(

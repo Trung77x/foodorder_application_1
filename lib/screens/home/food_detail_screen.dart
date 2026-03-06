@@ -21,6 +21,15 @@ class _FoodDetailScreenState extends State<FoodDetailScreen> {
       appBar: AppBar(
         backgroundColor: Colors.orange,
         elevation: 0,
+        title: const Text(
+          'TH3 - Ho Sy Trung - 2351160560',
+          style: TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.w700,
+            fontSize: 14,
+          ),
+        ),
+        centerTitle: true,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () => Navigator.pop(context),
