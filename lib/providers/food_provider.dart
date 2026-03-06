@@ -7,7 +7,7 @@ class FoodProvider extends ChangeNotifier {
   List<FoodModel> _foods = [
     FoodModel(
       id: '52772',
-      name: 'Teriyaki Chicken',
+      name: 'Gà Nướng Teriyaki',
       description: 'Gà teriyaki nướng cùng rau củ, sốt ngọt đậm đà',
       price: 85000,
       image:
@@ -19,7 +19,7 @@ class FoodProvider extends ChangeNotifier {
     ),
     FoodModel(
       id: '52874',
-      name: 'Beef and Mustard Pie',
+      name: 'Bánh Nướng Bò Mù Tạt',
       description: 'Bánh nướng nhân bò với mù tạt thơm phức',
       price: 95000,
       image:
@@ -31,7 +31,7 @@ class FoodProvider extends ChangeNotifier {
     ),
     FoodModel(
       id: '52944',
-      name: 'Escovitch Fish',
+      name: 'Cá Chiên Sốt Chua Cay',
       description: 'Cá chiên giòn sốt chua cay kiểu Jamaica',
       price: 78000,
       image: 'https://www.themealdb.com/images/media/meals/1520084413.jpg',
@@ -42,7 +42,7 @@ class FoodProvider extends ChangeNotifier {
     ),
     FoodModel(
       id: '52893',
-      name: 'Apple Crumble',
+      name: 'Bánh Táo Nướng Giòn',
       description: 'Bánh nướng táo và mâm xôi, phủ lớp bơ giòn',
       price: 45000,
       image:
@@ -54,7 +54,7 @@ class FoodProvider extends ChangeNotifier {
     ),
     FoodModel(
       id: '52835',
-      name: 'Kung Pao Chicken',
+      name: 'Gà Xào Cay Tứ Xuyên',
       description: 'Gà xào cay kiểu Tứ Xuyên, đậu phộng giòn',
       price: 72000,
       image: 'https://www.themealdb.com/images/media/meals/1525872624.jpg',
@@ -65,7 +65,7 @@ class FoodProvider extends ChangeNotifier {
     ),
     FoodModel(
       id: '52997',
-      name: 'Spicy Arrabiata Penne',
+      name: 'Mì Ý Sốt Cà Chua Cay',
       description: 'Mì Penne sốt cà chua cay kiểu Ý, thơm lừng',
       price: 65000,
       image:
@@ -77,7 +77,7 @@ class FoodProvider extends ChangeNotifier {
     ),
     FoodModel(
       id: '53050',
-      name: 'Ayam Percik',
+      name: 'Gà Nướng Sốt Dừa',
       description: 'Gà nướng sốt dừa cay kiểu Malaysia',
       price: 88000,
       image:
@@ -89,7 +89,7 @@ class FoodProvider extends ChangeNotifier {
     ),
     FoodModel(
       id: '52832',
-      name: 'Katsu Curry',
+      name: 'Cơm Cà Ri Gà Chiên Xù',
       description: 'Cơm cà ri gà chiên xù kiểu Nhật Bản',
       price: 82000,
       image:
@@ -101,7 +101,7 @@ class FoodProvider extends ChangeNotifier {
     ),
     FoodModel(
       id: '52855',
-      name: 'Banana Pancakes',
+      name: 'Bánh Kếp Chuối',
       description: 'Bánh kếp chuối mềm mịn, ngọt tự nhiên',
       price: 35000,
       image:
@@ -113,7 +113,7 @@ class FoodProvider extends ChangeNotifier {
     ),
     FoodModel(
       id: '52773',
-      name: 'Honey Teriyaki Salmon',
+      name: 'Cá Hồi Sốt Mật Ong',
       description: 'Cá hồi sốt mật ong teriyaki, béo ngậy',
       price: 115000,
       image:
@@ -125,7 +125,7 @@ class FoodProvider extends ChangeNotifier {
     ),
     FoodModel(
       id: '52977',
-      name: 'Corba Lentil Soup',
+      name: 'Súp Đậu Lăng',
       description: 'Súp đậu lăng Thổ Nhĩ Kỳ ấm bụng, giàu dinh dưỡng',
       price: 42000,
       image:
@@ -137,7 +137,7 @@ class FoodProvider extends ChangeNotifier {
     ),
     FoodModel(
       id: '52878',
-      name: 'Lamb Rogan Josh',
+      name: 'Cừu Nấu Cà Ri Đỏ',
       description: 'Cừu nấu cà ri đỏ kiểu Ấn Độ, đậm vị',
       price: 105000,
       image:
