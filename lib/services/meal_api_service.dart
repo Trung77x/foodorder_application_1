@@ -334,7 +334,6 @@ class MealAPIService {
       'Hot and Sour Soup': 'Súp Chua Cay',
       'Katsu Chicken curry': 'Gà Katsu Cà Ri',
       'Pork Chops with Roasted Garlic': 'Sườn Heo Nướng Tỏi',
-      'Pork Cassoulet': 'Heo Hầm Đậu Pháp',
       'Pork Teriyaki': 'Heo Teriyaki',
       'Pozole Verde con Pollo': 'Súp Heo Xanh Mexico',
       'Ribs': 'Sườn Heo Nướng BBQ',

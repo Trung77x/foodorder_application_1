@@ -149,11 +149,13 @@ class FoodProvider extends ChangeNotifier {
     ),
   ];
   List<FoodModel> _filteredFoods = [];
-  bool _isLoading = false;
+  bool _isLoading = true; // Start as loading
+  String? _errorMessage;
   String _selectedCategory = 'All';
 
   List<FoodModel> get foods => _filteredFoods.isEmpty ? _foods : _filteredFoods;
   bool get isLoading => _isLoading;
+  String? get errorMessage => _errorMessage;
   String get selectedCategory => _selectedCategory;
   List<String> get categories {
     final cats = <String>{'All'};
@@ -166,6 +168,10 @@ class FoodProvider extends ChangeNotifier {
   }
 
   Future<void> loadFoods() async {
+    _isLoading = true;
+    _errorMessage = null;
+    notifyListeners();
+
     try {
       final apiMeals = await MealAPIService.fetchAllMeals();
       if (apiMeals.isNotEmpty) {
@@ -176,11 +182,18 @@ class FoodProvider extends ChangeNotifier {
               .where((f) => f.category == _selectedCategory)
               .toList();
         }
+        _errorMessage = null;
       }
     } catch (e) {
-      // Keep hardcoded meals on error
+      _errorMessage = 'Không thể tải dữ liệu. Vui lòng kiểm tra kết nối mạng.';
     }
+    _isLoading = false;
     notifyListeners();
+  }
+
+  /// Retry loading foods (called from Retry button)
+  Future<void> retryLoadFoods() async {
+    await loadFoods();
   }
 
   void filterByCategory(String category) {
