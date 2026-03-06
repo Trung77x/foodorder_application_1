@@ -263,6 +263,9 @@ class _CartScreenState extends State<CartScreen> {
                                 // Total and delete
                                 Column(
                                   crossAxisAlignment: CrossAxisAlignment.end,
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  mainAxisSize: MainAxisSize.min,
                                   children: [
                                     Text(
                                       '${(item.totalPrice.toInt() ~/ 1000)} k',
@@ -272,7 +275,7 @@ class _CartScreenState extends State<CartScreen> {
                                         color: Colors.orange,
                                       ),
                                     ),
-                                    const Spacer(),
+                                    const SizedBox(height: 20),
                                     GestureDetector(
                                       onTap: () {
                                         cartProvider.removeItem(index);
@@ -338,10 +341,10 @@ class _CartScreenState extends State<CartScreen> {
                         const SizedBox(height: 12),
                         _SummaryRow(
                           label: 'Phí giao hàng',
-                          value: cartProvider.subtotal > 100
+                          value: cartProvider.subtotal > 100000
                               ? 'Miễn phí'
                               : '${(cartProvider.deliveryFee.toInt() ~/ 1000)} k đ',
-                          valueColor: cartProvider.subtotal > 100
+                          valueColor: cartProvider.subtotal > 100000
                               ? Colors.green
                               : Colors.grey,
                         ),

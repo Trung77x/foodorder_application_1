@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../models/order_model.dart';
+import '../../models/cart_item_model.dart';
 import '../../providers/cart_provider.dart';
 import '../../providers/auth_provider.dart';
 import '../../providers/order_provider.dart';
@@ -326,7 +327,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                             id: DateTime.now().millisecondsSinceEpoch
                                 .toString(),
                             userId: authProvider.user!.id,
-                            items: cartProvider.items,
+                            items: List<CartItemModel>.from(cartProvider.items),
                             subtotal: cartProvider.subtotal,
                             deliveryFee: cartProvider.deliveryFee,
                             tax: cartProvider.tax,

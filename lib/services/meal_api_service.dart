@@ -1,12 +1,17 @@
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'dart:math';
+import 'dart:io';
+import 'dart:async';
 import '../models/food_model.dart';
 
 class MealAPIService {
   static const String baseUrl = 'https://www.themealdb.com/api/json/v1/1';
 
   /// Fetch meals from multiple categories IN PARALLEL for speed
+  /// Throws [SocketException] when no internet
+  /// Throws [TimeoutException] when server too slow
+  /// Throws [HttpException] when server returns error
   static Future<List<FoodModel>> fetchAllMeals() async {
     final categories = [
       'Chicken',
@@ -23,9 +28,9 @@ class MealAPIService {
       final futures = categories.map(
         (cat) => http
             .get(Uri.parse('$baseUrl/filter.php?c=$cat'))
-            .timeout(const Duration(seconds: 6)),
+            .timeout(const Duration(seconds: 8)),
       );
-      final responses = await Future.wait(futures, eagerError: false);
+      final responses = await Future.wait(futures, eagerError: true);
 
       final List<FoodModel> allMeals = [];
       for (int i = 0; i < responses.length; i++) {
@@ -63,17 +68,35 @@ class MealAPIService {
         return allMeals;
       }
       return [];
+    } on SocketException {
+      // No internet connection
+      throw const SocketException(
+        'Không có kết nối mạng. Vui lòng kiểm tra Wi-Fi hoặc dữ liệu di động.',
+      );
+    } on TimeoutException {
+      // Server response too slow
+      throw TimeoutException(
+        'Máy chủ phản hồi quá chậm. Vui lòng thử lại sau.',
+      );
+    } on HttpException {
+      // HTTP error
+      throw const HttpException('Lỗi từ máy chủ. Vui lòng thử lại sau.');
+    } on FormatException {
+      // JSON parse error
+      throw const FormatException('Dữ liệu không hợp lệ từ máy chủ.');
     } catch (e) {
-      return [];
+      // Unknown error - rethrow for provider to catch
+      throw Exception('Lỗi không xác định: ${e.toString()}');
     }
   }
 
   /// Search meals by name
+  /// Throws exceptions on network errors
   static Future<List<FoodModel>> searchMeals(String query) async {
     try {
       final response = await http
           .get(Uri.parse('$baseUrl/search.php?s=$query'))
-          .timeout(const Duration(seconds: 6));
+          .timeout(const Duration(seconds: 8));
 
       if (response.statusCode == 200) {
         final json = jsonDecode(response.body);

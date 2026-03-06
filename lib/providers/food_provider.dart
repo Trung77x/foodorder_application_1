@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'dart:io';
+import 'dart:async';
 import '../models/food_model.dart';
 import '../services/meal_api_service.dart';
 
@@ -151,11 +153,13 @@ class FoodProvider extends ChangeNotifier {
   List<FoodModel> _filteredFoods = [];
   bool _isLoading = true; // Start as loading
   String? _errorMessage;
+  bool _loadSuccess = false;
   String _selectedCategory = 'All';
 
   List<FoodModel> get foods => _filteredFoods.isEmpty ? _foods : _filteredFoods;
   bool get isLoading => _isLoading;
   String? get errorMessage => _errorMessage;
+  bool get loadSuccess => _loadSuccess;
   String get selectedCategory => _selectedCategory;
   List<String> get categories {
     final cats = <String>{'All'};
@@ -170,6 +174,7 @@ class FoodProvider extends ChangeNotifier {
   Future<void> loadFoods() async {
     _isLoading = true;
     _errorMessage = null;
+    _loadSuccess = false;
     notifyListeners();
 
     try {
@@ -183,11 +188,39 @@ class FoodProvider extends ChangeNotifier {
               .toList();
         }
         _errorMessage = null;
+        _loadSuccess = true;
+      } else {
+        _errorMessage = 'Không có dữ liệu món ăn. Vui lòng thử lại.';
+        _loadSuccess = false;
       }
+    } on SocketException catch (e) {
+      // === Mất kết nối mạng ===
+      _errorMessage = e.message;
+      _loadSuccess = false;
+    } on TimeoutException catch (e) {
+      // === Máy chủ phản hồi quá chậm ===
+      _errorMessage = e.message ?? 'Kết nối quá hạn. Vui lòng thử lại.';
+      _loadSuccess = false;
+    } on HttpException catch (e) {
+      // === Lỗi HTTP từ server ===
+      _errorMessage = e.message;
+      _loadSuccess = false;
+    } on FormatException catch (e) {
+      // === Lỗi parse dữ liệu ===
+      _errorMessage = e.message;
+      _loadSuccess = false;
     } catch (e) {
-      _errorMessage = 'Không thể tải dữ liệu. Vui lòng kiểm tra kết nối mạng.';
+      // === Lỗi không xác định ===
+      _errorMessage = 'Lỗi không xác định: ${e.toString()}';
+      _loadSuccess = false;
     }
     _isLoading = false;
+    notifyListeners();
+  }
+
+  /// Clear success flag after UI has shown it
+  void clearSuccessFlag() {
+    _loadSuccess = false;
     notifyListeners();
   }
 

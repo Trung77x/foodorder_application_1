@@ -12,7 +12,7 @@ class CartProvider extends ChangeNotifier {
   }
 
   double get tax => subtotal * 0.1;
-  double get deliveryFee => subtotal > 100 ? 0 : 50;
+  double get deliveryFee => subtotal > 100000 ? 0 : 15000;
   double get total => subtotal + tax + deliveryFee;
 
   int get itemCount => _items.length;
