@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import '../../models/food_model.dart';
 import '../../providers/food_provider.dart';
 import 'food_detail_screen.dart';
@@ -341,23 +342,34 @@ class FoodCard extends StatelessWidget {
                         topLeft: Radius.circular(16),
                         topRight: Radius.circular(16),
                       ),
-                      child: Image.network(
-                        food.image,
+                      child: CachedNetworkImage(
+                        imageUrl: food.image,
                         width: double.infinity,
                         height: 140,
                         fit: BoxFit.cover,
-                        errorBuilder: (context, error, stackTrace) {
-                          return Container(
-                            width: double.infinity,
-                            height: 140,
-                            color: Colors.grey.shade300,
-                            child: const Icon(
-                              Icons.image_not_supported,
-                              size: 40,
-                              color: Colors.grey,
+                        placeholder: (context, url) => Container(
+                          width: double.infinity,
+                          height: 140,
+                          color: Colors.orange.shade50,
+                          child: Center(
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              valueColor: AlwaysStoppedAnimation<Color>(
+                                Colors.orange.shade300,
+                              ),
                             ),
-                          );
-                        },
+                          ),
+                        ),
+                        errorWidget: (context, url, error) => Container(
+                          width: double.infinity,
+                          height: 140,
+                          color: Colors.orange.shade50,
+                          child: Icon(
+                            Icons.restaurant_menu,
+                            size: 40,
+                            color: Colors.orange.shade200,
+                          ),
+                        ),
                       ),
                     ),
                     Positioned(
