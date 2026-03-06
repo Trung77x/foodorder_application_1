@@ -9,8 +9,7 @@ class FoodProvider extends ChangeNotifier {
       name: 'Cơm Chiên Dương Châu',
       description: 'Cơm chiên với tôm, trứng, rau, hành',
       price: 85000,
-      image:
-          'https://media.istockphoto.com/id/521471954/photo/fried-rice.jpg?s=612x612&w=0&k=20&c=SEyJMY9R-w_SxJr0XtPwHDHSPXGaUpOcnRfG-CvGLow=',
+      image: 'https://via.placeholder.com/300x300/FF9500/FFFFFF?text=Com+Chien',
       category: 'Cơm',
       rating: 5,
       reviews: 120,
@@ -21,8 +20,7 @@ class FoodProvider extends ChangeNotifier {
       name: 'Phở Bò',
       description: 'Phở bò tươi, nước dùng thơm ngon',
       price: 75000,
-      image:
-          'https://media.istockphoto.com/id/1161015185/photo/pho-bo-is-a-vietnamese-beef-noodle-soup-consisting-of-broth-rice-noodles-beef-meat.jpg?s=612x612&w=0&k=20&c=2T7n7xQzFvdQlGqx4xIBxFNLU0k2Kcvvj1u7bfJQNQQ=',
+      image: 'https://via.placeholder.com/300x300/FF9500/FFFFFF?text=Pho+Bo',
       category: 'Mì & Phở',
       rating: 5,
       reviews: 230,
@@ -33,8 +31,7 @@ class FoodProvider extends ChangeNotifier {
       name: 'Bánh Mì Thập Cẩm',
       description: 'Bánh mì giòn với pâté, thịt lạp xưởng, rau',
       price: 45000,
-      image:
-          'https://media.istockphoto.com/id/1198524203/photo/banh-mi-sandwich.jpg?s=612x612&w=0&k=20&c=gFLQy2S4D8_SaIc1wnCPZMIa5qsK1tIgJChJmAKVV88=',
+      image: 'https://via.placeholder.com/300x300/FF9500/FFFFFF?text=Banh+Mi',
       category: 'Bánh',
       rating: 4,
       reviews: 180,
@@ -45,8 +42,7 @@ class FoodProvider extends ChangeNotifier {
       name: 'Gà Rán Giòn',
       description: 'Gà rán chiên giòn, ăn kèm nước mắm',
       price: 89000,
-      image:
-          'https://media.istockphoto.com/id/613932620/photo/crispy-fried-chicken.jpg?s=612x612&w=0&k=20&c=XdmCqVj-bG0SfF2vNVh3EQQhqJa8LYHhsaLXiGGh6AE=',
+      image: 'https://via.placeholder.com/300x300/FF9500/FFFFFF?text=Ga+Ran',
       category: 'Gà',
       rating: 5,
       reviews: 290,
@@ -57,8 +53,7 @@ class FoodProvider extends ChangeNotifier {
       name: 'Bún Chả',
       description: 'Bún tươi với thịt nướng, nước mắm',
       price: 55000,
-      image:
-          'https://media.istockphoto.com/id/1304800949/photo/grilled-pork-with-rice-noodles.jpg?s=612x612&w=0&k=20&c=D7YQnSWJHl1Vw2l2jrPqT1m0s5-Kx_G-Qhv6E8aJCfg=',
+      image: 'https://via.placeholder.com/300x300/FF9500/FFFFFF?text=Bun+Cha',
       category: 'Bún',
       rating: 4,
       reviews: 150,
@@ -70,7 +65,7 @@ class FoodProvider extends ChangeNotifier {
       description: 'Chè ba màu ngon mát, giải nhiệt mùa hè',
       price: 25000,
       image:
-          'https://media.istockphoto.com/id/1350820651/photo/colorful-shaved-ice-dessert.jpg?s=612x612&w=0&k=20&c=nH9gJ7LmIzYX_G3mKLxhWPJcZnLk7wXpXSvK5lJQvH0=',
+          'https://via.placeholder.com/300x300/FF9500/FFFFFF?text=Che+Ba+Mau',
       category: 'Tráng Miệng',
       rating: 4,
       reviews: 95,
@@ -82,7 +77,7 @@ class FoodProvider extends ChangeNotifier {
       description: 'Cơm chiên cà chua tươi mát, trứng nổi',
       price: 65000,
       image:
-          'https://media.istockphoto.com/id/1328583241/photo/tomato-fried-rice-on-white-background.jpg?s=612x612&w=0&k=20&c=GHiJjgKxbLqyYkL7X0eQmHYvJHqH3dYWCd0m6UZzLdI=',
+          'https://via.placeholder.com/300x300/FF9500/FFFFFF?text=Com+Ca+Chua',
       category: 'Cơm',
       rating: 5,
       reviews: 110,
@@ -93,8 +88,7 @@ class FoodProvider extends ChangeNotifier {
       name: 'Bánh Xèo',
       description: 'Bánh xèo vàng, giòn, ăn kèm rau sống',
       price: 48000,
-      image:
-          'https://media.istockphoto.com/id/1307843877/photo/sizzling-crepe-with-shrimp-and-pork.jpg?s=612x612&w=0&k=20&c=6FWAqGbvZ_dKkpMpY1KxWPvMg34ZgSXLqUY0CtpL5tQ=',
+      image: 'https://via.placeholder.com/300x300/FF9500/FFFFFF?text=Banh+Xeo',
       category: 'Bánh',
       rating: 4,
       reviews: 140,
@@ -105,8 +99,7 @@ class FoodProvider extends ChangeNotifier {
       name: 'Canh Cua',
       description: 'Canh cua nóng, thanh mát, bổ dưỡng',
       price: 95000,
-      image:
-          'https://media.istockphoto.com/id/1188803119/photo/crab-soup-with-vegetable.jpg?s=612x612&w=0&k=20&c=bJH4uXCr5nBfL2V3qRn0Kz_4sU7DhZnH7Jx5rq0sXZo=',
+      image: 'https://via.placeholder.com/300x300/FF9500/FFFFFF?text=Canh+Cua',
       category: 'Canh',
       rating: 5,
       reviews: 85,
@@ -117,8 +110,7 @@ class FoodProvider extends ChangeNotifier {
       name: 'Trà Sữa Trân Châu',
       description: 'Trà sữa thơm ngon với trân châu dẻo',
       price: 35000,
-      image:
-          'https://media.istockphoto.com/id/1328349157/photo/bubble-tea.jpg?s=612x612&w=0&k=20&c=4R7C5Z0gT1pP_qVoZT0l8OGHIpKh8pQ8gqIzH3tXsW4=',
+      image: 'https://via.placeholder.com/300x300/FF9500/FFFFFF?text=Tra+Sua',
       category: 'Đồ Uống',
       rating: 5,
       reviews: 320,
