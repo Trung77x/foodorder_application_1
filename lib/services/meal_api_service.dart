@@ -1,323 +1,146 @@
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'dart:math';
 import '../models/food_model.dart';
 
 class MealAPIService {
   static const String baseUrl = 'https://www.themealdb.com/api/json/v1/1';
 
-  /// Fetch meals by first letter with guaranteed images
-  static Future<List<FoodModel>> getMealsByLetter(String letter) async {
-    try {
-      final response = await http
-          .get(Uri.parse('$baseUrl/search.php?f=$letter'))
-          .timeout(const Duration(seconds: 10));
-
-      if (response.statusCode == 200) {
-        final json = jsonDecode(response.body);
-        final meals = json['meals'] as List?;
-
-        if (meals == null || meals.isEmpty) {
-          return _getDefaultMeals();
-        }
-
-        return meals.asMap().entries.map((entry) {
-          final index = entry.key;
-          final meal = entry.value;
-
-          // Ensure image URL is valid
-          String imageUrl = meal['strMealThumb'] ?? '';
-          if (imageUrl.isEmpty || !imageUrl.startsWith('http')) {
-            imageUrl =
-                'https://via.placeholder.com/300x300?text=${meal['strMeal'] ?? 'Food'}';
-          }
-
-          return FoodModel(
-            id: meal['idMeal'] ?? 'meal_$index',
-            name: meal['strMeal'] ?? 'Unknown Dish',
-            description:
-                (meal['strInstructions'] as String?)
-                    ?.split('.')
-                    .firstWhere(
-                      (s) => s.isNotEmpty,
-                      orElse: () => 'Delicious dish',
-                    ) ??
-                'Delicious dish from TheMealDB',
-            price: 45000 + (index * 5000).toDouble(),
-            image: imageUrl,
-            category: meal['strCategory'] ?? 'Other',
-            rating: 4 + (index % 2),
-            reviews: 50 + (index * 10),
-            prepTime: 15 + (index % 25),
-            available: true,
-          );
-        }).toList();
-      }
-      return _getDefaultMeals();
-    } catch (e) {
-      return _getDefaultMeals();
-    }
-  }
-
-  /// Get default meals with working images
-  static List<FoodModel> _getDefaultMeals() {
-    return [
-      FoodModel(
-        id: '1',
-        name: 'Cơm Chiên Dương Châu',
-        description: 'Cơm chiên với tôm, trứng, rau, hành',
-        price: 85000,
-        image:
-            'https://via.placeholder.com/300x300/FF9500/FFFFFF?text=Com+Chien',
-        category: 'Cơm',
-        rating: 5,
-        reviews: 120,
-        prepTime: 15,
-      ),
-      FoodModel(
-        id: '2',
-        name: 'Phở Bò',
-        description: 'Phở bò tươi, nước dùng thơm ngon',
-        price: 75000,
-        image: 'https://via.placeholder.com/300x300/FF9500/FFFFFF?text=Pho+Bo',
-        category: 'Mì & Phở',
-        rating: 5,
-        reviews: 230,
-        prepTime: 20,
-      ),
-      FoodModel(
-        id: '3',
-        name: 'Bánh Mì Thập Cẩm',
-        description: 'Bánh mì giòn với pâté, thịt lạp xưởng, rau',
-        price: 45000,
-        image: 'https://via.placeholder.com/300x300/FF9500/FFFFFF?text=Banh+Mi',
-        category: 'Bánh',
-        rating: 4,
-        reviews: 180,
-        prepTime: 10,
-      ),
-      FoodModel(
-        id: '4',
-        name: 'Gà Rán Giòn',
-        description: 'Gà rán chiên giòn, ăn kèm nước mắm chua cay',
-        price: 89000,
-        image: 'https://via.placeholder.com/300x300/FF9500/FFFFFF?text=Ga+Ran',
-        category: 'Gà',
-        rating: 5,
-        reviews: 290,
-        prepTime: 12,
-      ),
-      FoodModel(
-        id: '5',
-        name: 'Bún Chả',
-        description: 'Bún tươi với thịt nướng, nước mắm',
-        price: 55000,
-        image: 'https://via.placeholder.com/300x300/FF9500/FFFFFF?text=Bun+Cha',
-        category: 'Bún',
-        rating: 4,
-        reviews: 150,
-        prepTime: 15,
-      ),
-      FoodModel(
-        id: '6',
-        name: 'Chè Ba Màu',
-        description: 'Chè ba màu ngon mát, giải nhiệt mùa hè',
-        price: 25000,
-        image:
-            'https://via.placeholder.com/300x300/FF9500/FFFFFF?text=Che+Ba+Mau',
-        category: 'Tráng Miệng',
-        rating: 4,
-        reviews: 95,
-        prepTime: 3,
-      ),
-      FoodModel(
-        id: '7',
-        name: 'Cơm Cà Chua Trứng',
-        description: 'Cơm chiên cà chua tươi mát, trứng nổi',
-        price: 65000,
-        image:
-            'https://via.placeholder.com/300x300/FF9500/FFFFFF?text=Com+Ca+Chua',
-        category: 'Cơm',
-        rating: 5,
-        reviews: 110,
-        prepTime: 15,
-      ),
-      FoodModel(
-        id: '8',
-        name: 'Bánh Xèo',
-        description: 'Bánh xèo vàng, giòn, ăn kèm rau sống',
-        price: 48000,
-        image:
-            'https://via.placeholder.com/300x300/FF9500/FFFFFF?text=Banh+Xeo',
-        category: 'Bánh',
-        rating: 4,
-        reviews: 140,
-        prepTime: 10,
-      ),
-      FoodModel(
-        id: '9',
-        name: 'Canh Cua',
-        description: 'Canh cua nóng, thanh mát, bổ dưỡng',
-        price: 95000,
-        image:
-            'https://via.placeholder.com/300x300/FF9500/FFFFFF?text=Canh+Cua',
-        category: 'Canh',
-        rating: 5,
-        reviews: 85,
-        prepTime: 25,
-      ),
-      FoodModel(
-        id: '10',
-        name: 'Trà Sữa Trân Châu',
-        description: 'Trà sữa thơm ngon với trân châu dẻo',
-        price: 35000,
-        image: 'https://via.placeholder.com/300x300/FF9500/FFFFFF?text=Tra+Sua',
-        category: 'Đồ Uống',
-        rating: 5,
-        reviews: 320,
-        prepTime: 5,
-      ),
+  /// Fetch a full list of meals from multiple categories for the home screen
+  static Future<List<FoodModel>> fetchAllMeals() async {
+    final List<FoodModel> allMeals = [];
+    final categories = [
+      'Chicken',
+      'Beef',
+      'Seafood',
+      'Dessert',
+      'Pasta',
+      'Pork',
+      'Lamb',
+      'Side',
     ];
-  }
+    final random = Random();
 
-  /// Fetch random meals
-  static Future<List<FoodModel>> getRandomMeals(int count) async {
-    List<FoodModel> meals = [];
     try {
-      for (int i = 0; i < count; i++) {
+      for (final category in categories) {
         final response = await http
-            .get(Uri.parse('$baseUrl/random.php'))
-            .timeout(const Duration(seconds: 10));
+            .get(Uri.parse('$baseUrl/filter.php?c=$category'))
+            .timeout(const Duration(seconds: 8));
 
         if (response.statusCode == 200) {
           final json = jsonDecode(response.body);
-          final mealList = json['meals'] as List?;
+          final meals = json['meals'] as List?;
 
-          if (mealList != null && mealList.isNotEmpty) {
-            final meal = mealList[0];
-
-            String imageUrl = meal['strMealThumb'] ?? '';
-            if (imageUrl.isEmpty || !imageUrl.startsWith('http')) {
-              imageUrl =
-                  'https://via.placeholder.com/300x300?text=${meal['strMeal'] ?? 'Food'}';
+          if (meals != null && meals.isNotEmpty) {
+            // Take up to 3 meals per category for variety
+            final selected = (meals.toList()..shuffle(random)).take(3);
+            for (final meal in selected) {
+              final imageUrl = meal['strMealThumb'] ?? '';
+              if (imageUrl.isNotEmpty) {
+                allMeals.add(
+                  FoodModel(
+                    id: meal['idMeal'] ?? 'meal_${allMeals.length}',
+                    name: meal['strMeal'] ?? 'Unknown Dish',
+                    description: _getVietnameseDesc(category),
+                    price: _getPriceForCategory(category, random),
+                    image: '$imageUrl/preview',
+                    category: _translateCategory(category),
+                    rating: 4 + random.nextInt(2),
+                    reviews: 30 + random.nextInt(300),
+                    prepTime: 10 + random.nextInt(30),
+                    available: true,
+                  ),
+                );
+              }
             }
-
-            meals.add(
-              FoodModel(
-                id: meal['idMeal'] ?? 'meal_$i',
-                name: meal['strMeal'] ?? 'Unknown',
-                description:
-                    (meal['strInstructions'] as String?)
-                        ?.split('.')
-                        .firstWhere(
-                          (s) => s.isNotEmpty,
-                          orElse: () => 'Delicious dish',
-                        ) ??
-                    'Delicious dish',
-                price: 45000 + (i * 5000).toDouble(),
-                image: imageUrl,
-                category: meal['strCategory'] ?? 'Other',
-                rating: 4 + (i % 2),
-                reviews: 50 + (i * 10),
-                prepTime: 15 + (i % 25),
-                available: true,
-              ),
-            );
           }
         }
       }
-      return meals.isNotEmpty ? meals : _getDefaultMeals();
+
+      if (allMeals.isNotEmpty) {
+        allMeals.shuffle(random);
+        return allMeals;
+      }
+      return getDefaultMeals();
     } catch (e) {
-      return _getDefaultMeals();
+      return getDefaultMeals();
     }
   }
 
-  /// Get meals by category with images
-  static Future<List<FoodModel>> getMealsByCategory(String category) async {
+  /// Get meal detail by ID (for full description)
+  static Future<FoodModel?> getMealDetail(String id) async {
     try {
       final response = await http
-          .get(Uri.parse('$baseUrl/filter.php?c=$category'))
-          .timeout(const Duration(seconds: 10));
+          .get(Uri.parse('$baseUrl/lookup.php?i=$id'))
+          .timeout(const Duration(seconds: 8));
 
       if (response.statusCode == 200) {
         final json = jsonDecode(response.body);
         final meals = json['meals'] as List?;
-
-        if (meals == null || meals.isEmpty) {
-          return _getDefaultMeals();
-        }
-
-        return meals.asMap().entries.map((entry) {
-          final index = entry.key;
-          final meal = entry.value;
-
-          String imageUrl = meal['strMealThumb'] ?? '';
-          if (imageUrl.isEmpty || !imageUrl.startsWith('http')) {
-            imageUrl =
-                'https://via.placeholder.com/300x300?text=${meal['strMeal'] ?? 'Food'}';
-          }
+        if (meals != null && meals.isNotEmpty) {
+          final meal = meals[0];
+          final imageUrl = meal['strMealThumb'] ?? '';
+          final instructions = (meal['strInstructions'] as String?) ?? '';
+          final desc = instructions
+              .split('.')
+              .where((s) => s.trim().isNotEmpty)
+              .take(2)
+              .join('. ');
 
           return FoodModel(
-            id: meal['idMeal'] ?? 'meal_$index',
+            id: meal['idMeal'] ?? id,
             name: meal['strMeal'] ?? 'Unknown',
-            description: 'Delicious $category',
-            price: 45000 + (index * 5000).toDouble(),
-            image: imageUrl,
-            category: category,
-            rating: 4 + (index % 2),
-            reviews: 50 + (index * 10),
-            prepTime: 15 + (index % 25),
+            description: desc.isNotEmpty ? '$desc.' : 'Delicious dish',
+            price: 55000,
+            image: imageUrl.isNotEmpty ? '$imageUrl/preview' : '',
+            category: _translateCategory(meal['strCategory'] ?? 'Other'),
+            rating: 5,
+            reviews: 100,
+            prepTime: 20,
             available: true,
           );
-        }).toList();
+        }
       }
-      return _getDefaultMeals();
+      return null;
     } catch (e) {
-      return _getDefaultMeals();
+      return null;
     }
   }
 
-  /// Search meals by name with images
+  /// Search meals by name
   static Future<List<FoodModel>> searchMeals(String query) async {
     try {
       final response = await http
           .get(Uri.parse('$baseUrl/search.php?s=$query'))
-          .timeout(const Duration(seconds: 10));
+          .timeout(const Duration(seconds: 8));
 
       if (response.statusCode == 200) {
         final json = jsonDecode(response.body);
         final meals = json['meals'] as List?;
 
-        if (meals == null || meals.isEmpty) {
-          return [];
-        }
+        if (meals == null || meals.isEmpty) return [];
 
-        return meals.asMap().entries.map((entry) {
-          final index = entry.key;
-          final meal = entry.value;
-
-          String imageUrl = meal['strMealThumb'] ?? '';
-          if (imageUrl.isEmpty || !imageUrl.startsWith('http')) {
-            imageUrl =
-                'https://via.placeholder.com/300x300?text=${meal['strMeal'] ?? 'Food'}';
-          }
+        final random = Random();
+        return meals.map((meal) {
+          final imageUrl = meal['strMealThumb'] ?? '';
+          final cat = meal['strCategory'] ?? 'Other';
+          final instructions = (meal['strInstructions'] as String?) ?? '';
+          final desc = instructions
+              .split('.')
+              .where((s) => s.trim().isNotEmpty)
+              .take(1)
+              .join('. ');
 
           return FoodModel(
-            id: meal['idMeal'] ?? 'meal_$index',
+            id: meal['idMeal'] ?? 'meal_0',
             name: meal['strMeal'] ?? 'Unknown',
-            description:
-                (meal['strInstructions'] as String?)
-                    ?.split('.')
-                    .firstWhere(
-                      (s) => s.isNotEmpty,
-                      orElse: () => 'Delicious dish',
-                    ) ??
-                'Delicious dish',
-            price: 45000 + (index * 5000).toDouble(),
-            image: imageUrl,
-            category: meal['strCategory'] ?? 'Other',
-            rating: 4 + (index % 2),
-            reviews: 50 + (index * 10),
-            prepTime: 15 + (index % 25),
+            description: desc.isNotEmpty ? '$desc.' : 'Delicious dish',
+            price: _getPriceForCategory(cat, random),
+            image: imageUrl.isNotEmpty ? '$imageUrl/preview' : '',
+            category: _translateCategory(cat),
+            rating: 4 + random.nextInt(2),
+            reviews: 30 + random.nextInt(200),
+            prepTime: 10 + random.nextInt(30),
             available: true,
           );
         }).toList();
@@ -325,6 +148,233 @@ class MealAPIService {
       return [];
     } catch (e) {
       return [];
+    }
+  }
+
+  /// Default meals with REAL TheMealDB images (known valid IDs)
+  static List<FoodModel> getDefaultMeals() {
+    return [
+      FoodModel(
+        id: '52772',
+        name: 'Teriyaki Chicken Casserole',
+        description: 'Gà teriyaki nướng cùng rau củ, sốt ngọt đậm đà',
+        price: 85000,
+        image:
+            'https://www.themealdb.com/images/media/meals/wvpsxx1468256321.jpg/preview',
+        category: 'Gà',
+        rating: 5,
+        reviews: 220,
+        prepTime: 25,
+      ),
+      FoodModel(
+        id: '52874',
+        name: 'Beef and Mustard Pie',
+        description: 'Bánh nướng nhân bò với mù tạt thơm phức',
+        price: 95000,
+        image:
+            'https://www.themealdb.com/images/media/meals/sytuqu1511553755.jpg/preview',
+        category: 'Bò',
+        rating: 5,
+        reviews: 180,
+        prepTime: 30,
+      ),
+      FoodModel(
+        id: '52944',
+        name: 'Escovitch Fish',
+        description: 'Cá chiên giòn sốt chua cay kiểu Jamaica',
+        price: 78000,
+        image:
+            'https://www.themealdb.com/images/media/meals/1520084413.jpg/preview',
+        category: 'Hải sản',
+        rating: 4,
+        reviews: 150,
+        prepTime: 20,
+      ),
+      FoodModel(
+        id: '52893',
+        name: 'Apple & Blackberry Crumble',
+        description: 'Bánh nướng táo và mâm xôi, phủ lớp bơ giòn',
+        price: 45000,
+        image:
+            'https://www.themealdb.com/images/media/meals/xvsurr1511719182.jpg/preview',
+        category: 'Tráng miệng',
+        rating: 5,
+        reviews: 95,
+        prepTime: 15,
+      ),
+      FoodModel(
+        id: '52835',
+        name: 'Kung Pao Chicken',
+        description: 'Gà xào cay kiểu Tứ Xuyên, đậu phộng giòn',
+        price: 72000,
+        image:
+            'https://www.themealdb.com/images/media/meals/1525872624.jpg/preview',
+        category: 'Gà',
+        rating: 5,
+        reviews: 310,
+        prepTime: 18,
+      ),
+      FoodModel(
+        id: '52997',
+        name: 'Spicy Arrabiata Penne',
+        description: 'Mì Penne sốt cà chua cay kiểu Ý, thơm lừng',
+        price: 65000,
+        image:
+            'https://www.themealdb.com/images/media/meals/ustsqw1468250014.jpg/preview',
+        category: 'Mì Ý',
+        rating: 4,
+        reviews: 200,
+        prepTime: 15,
+      ),
+      FoodModel(
+        id: '53050',
+        name: 'Ayam Percik',
+        description: 'Gà nướng sốt dừa cay kiểu Malaysia',
+        price: 88000,
+        image:
+            'https://www.themealdb.com/images/media/meals/020z181619788503.jpg/preview',
+        category: 'Gà',
+        rating: 5,
+        reviews: 175,
+        prepTime: 35,
+      ),
+      FoodModel(
+        id: '52832',
+        name: 'Katsu Curry',
+        description: 'Cơm cà ri gà chiên xù kiểu Nhật Bản',
+        price: 82000,
+        image:
+            'https://www.themealdb.com/images/media/meals/vwrpps1503068729.jpg/preview',
+        category: 'Gà',
+        rating: 5,
+        reviews: 280,
+        prepTime: 22,
+      ),
+      FoodModel(
+        id: '52855',
+        name: 'Banana Pancakes',
+        description: 'Bánh kếp chuối mềm mịn, ngọt tự nhiên',
+        price: 35000,
+        image:
+            'https://www.themealdb.com/images/media/meals/sywswr1511383814.jpg/preview',
+        category: 'Tráng miệng',
+        rating: 4,
+        reviews: 130,
+        prepTime: 10,
+      ),
+      FoodModel(
+        id: '52773',
+        name: 'Honey Teriyaki Salmon',
+        description: 'Cá hồi sốt mật ong teriyaki, thơm ngon béo ngậy',
+        price: 115000,
+        image:
+            'https://www.themealdb.com/images/media/meals/xxyupu1468262513.jpg/preview',
+        category: 'Hải sản',
+        rating: 5,
+        reviews: 260,
+        prepTime: 20,
+      ),
+      FoodModel(
+        id: '52977',
+        name: 'Corba (Lentil Soup)',
+        description: 'Súp đậu lăng Thổ Nhĩ Kỳ ấm bụng, giàu dinh dưỡng',
+        price: 42000,
+        image:
+            'https://www.themealdb.com/images/media/meals/58oia61564916529.jpg/preview',
+        category: 'Món phụ',
+        rating: 4,
+        reviews: 90,
+        prepTime: 15,
+      ),
+      FoodModel(
+        id: '52878',
+        name: 'Lamb Rogan Josh',
+        description: 'Cừu nấu cà ri đỏ kiểu Ấn Độ, đậm vị',
+        price: 105000,
+        image:
+            'https://www.themealdb.com/images/media/meals/vvpprx1487325699.jpg/preview',
+        category: 'Cừu',
+        rating: 5,
+        reviews: 170,
+        prepTime: 40,
+      ),
+    ];
+  }
+
+  static String _translateCategory(String category) {
+    switch (category) {
+      case 'Chicken':
+        return 'Gà';
+      case 'Beef':
+        return 'Bò';
+      case 'Seafood':
+        return 'Hải sản';
+      case 'Dessert':
+        return 'Tráng miệng';
+      case 'Pasta':
+        return 'Mì Ý';
+      case 'Pork':
+        return 'Heo';
+      case 'Lamb':
+        return 'Cừu';
+      case 'Side':
+        return 'Món phụ';
+      case 'Starter':
+        return 'Khai vị';
+      case 'Vegetarian':
+        return 'Chay';
+      case 'Breakfast':
+        return 'Bữa sáng';
+      case 'Miscellaneous':
+        return 'Khác';
+      default:
+        return category;
+    }
+  }
+
+  static String _getVietnameseDesc(String category) {
+    switch (category) {
+      case 'Chicken':
+        return 'Món gà thơm ngon, chế biến đa dạng';
+      case 'Beef':
+        return 'Thịt bò mềm, đậm đà hương vị';
+      case 'Seafood':
+        return 'Hải sản tươi sống, hương vị biển cả';
+      case 'Dessert':
+        return 'Tráng miệng ngọt ngào, hấp dẫn';
+      case 'Pasta':
+        return 'Mì Ý với sốt thơm lừng, béo ngậy';
+      case 'Pork':
+        return 'Thịt heo chế biến công phu';
+      case 'Lamb':
+        return 'Thịt cừu mềm, nêm nếm tinh tế';
+      case 'Side':
+        return 'Món phụ bổ sung dinh dưỡng';
+      default:
+        return 'Món ăn ngon miệng, hấp dẫn';
+    }
+  }
+
+  static double _getPriceForCategory(String category, Random random) {
+    switch (category) {
+      case 'Chicken':
+        return 70000 + random.nextInt(30) * 1000;
+      case 'Beef':
+        return 85000 + random.nextInt(30) * 1000;
+      case 'Seafood':
+        return 80000 + random.nextInt(40) * 1000;
+      case 'Dessert':
+        return 35000 + random.nextInt(20) * 1000;
+      case 'Pasta':
+        return 60000 + random.nextInt(25) * 1000;
+      case 'Pork':
+        return 65000 + random.nextInt(25) * 1000;
+      case 'Lamb':
+        return 95000 + random.nextInt(30) * 1000;
+      case 'Side':
+        return 35000 + random.nextInt(20) * 1000;
+      default:
+        return 55000 + random.nextInt(30) * 1000;
     }
   }
 }

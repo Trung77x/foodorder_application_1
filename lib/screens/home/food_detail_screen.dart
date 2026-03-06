@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import '../../models/food_model.dart';
 import '../../providers/cart_provider.dart';
 
@@ -31,19 +32,34 @@ class _FoodDetailScreenState extends State<FoodDetailScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Food Image
-            Image.network(
-              widget.food.image,
+            CachedNetworkImage(
+              imageUrl: widget.food.image,
               width: double.infinity,
               height: 250,
               fit: BoxFit.cover,
-              errorBuilder: (context, error, stackTrace) {
-                return Container(
-                  width: double.infinity,
-                  height: 250,
-                  color: Colors.grey.shade300,
-                  child: const Icon(Icons.image_not_supported),
-                );
-              },
+              placeholder: (context, url) => Container(
+                width: double.infinity,
+                height: 250,
+                color: Colors.orange.shade50,
+                child: Center(
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2,
+                    valueColor: AlwaysStoppedAnimation<Color>(
+                      Colors.orange.shade300,
+                    ),
+                  ),
+                ),
+              ),
+              errorWidget: (context, url, error) => Container(
+                width: double.infinity,
+                height: 250,
+                color: Colors.grey.shade300,
+                child: const Icon(
+                  Icons.restaurant_menu,
+                  size: 60,
+                  color: Colors.grey,
+                ),
+              ),
             ),
             Padding(
               padding: const EdgeInsets.all(15),
