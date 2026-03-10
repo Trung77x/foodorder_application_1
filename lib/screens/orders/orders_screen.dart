@@ -12,6 +12,22 @@ class OrdersScreen extends StatefulWidget {
 }
 
 class _OrdersScreenState extends State<OrdersScreen> {
+  bool _loaded = false;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (!_loaded) {
+      _loaded = true;
+      final authProvider = Provider.of<AuthProvider>(context, listen: false);
+      final orderProvider = Provider.of<OrderProvider>(context, listen: false);
+      final userId = authProvider.user?.id ?? '';
+      if (userId.isNotEmpty) {
+        orderProvider.loadOrdersFromFirestore(userId);
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
@@ -90,10 +106,11 @@ class _OrdersScreenState extends State<OrdersScreen> {
               slivers: [
                 // Header
                 SliverAppBar(
-                  expandedHeight: 80,
+                  expandedHeight: 100,
                   backgroundColor: Colors.orange.shade600,
                   elevation: 0,
                   pinned: true,
+                  automaticallyImplyLeading: false,
                   flexibleSpace: FlexibleSpaceBar(
                     background: Container(
                       decoration: BoxDecoration(

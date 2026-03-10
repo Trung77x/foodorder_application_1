@@ -389,6 +389,73 @@ class _LoginScreenState extends State<LoginScreen> {
                       ],
                     ),
                     SizedBox(height: size.height * 0.03),
+                    // Google Sign-In button
+                    Consumer<AuthProvider>(
+                      builder: (context, authProvider, _) {
+                        return SizedBox(
+                          width: double.infinity,
+                          height: 56,
+                          child: OutlinedButton(
+                            style: OutlinedButton.styleFrom(
+                              backgroundColor: Colors.white,
+                              side: BorderSide.none,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(14),
+                              ),
+                              elevation: 4,
+                              shadowColor: Colors.black26,
+                            ),
+                            onPressed: authProvider.isLoading
+                                ? null
+                                : () async {
+                                    final result = await authProvider
+                                        .signInWithGoogle();
+                                    if (result && mounted) {
+                                      Navigator.of(
+                                        context,
+                                      ).pushReplacementNamed('/home');
+                                    } else if (mounted) {
+                                      ScaffoldMessenger.of(
+                                        context,
+                                      ).showSnackBar(
+                                        const SnackBar(
+                                          content: Text(
+                                            'Đăng nhập Google thất bại',
+                                          ),
+                                          backgroundColor: Colors.red,
+                                        ),
+                                      );
+                                    }
+                                  },
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Image.network(
+                                  'https://lh3.googleusercontent.com/COxitqgJr1sJnIDe8-jiKhxDx1FrYbtRHKJ9z_hELisAlapwE9LUPh6fcXif5f_E8sP0XcGAzu6GVj5Ak3a0yUyd=s24',
+                                  height: 24,
+                                  width: 24,
+                                  errorBuilder: (_, __, ___) => const Icon(
+                                    Icons.g_mobiledata_rounded,
+                                    size: 28,
+                                    color: Colors.red,
+                                  ),
+                                ),
+                                const SizedBox(width: 12),
+                                Text(
+                                  'Đăng nhập bằng Google',
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w600,
+                                    color: Colors.grey.shade700,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                    SizedBox(height: size.height * 0.03),
                     // Sign up link
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,

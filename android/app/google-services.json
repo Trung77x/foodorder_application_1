@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "1018422104789",
+    "firebase_url": "https://fooderapp-89436-default-rtdb.asia-southeast1.firebasedatabase.app",
+    "project_id": "fooderapp-89436",
+    "storage_bucket": "fooderapp-89436.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1018422104789:android:e05efee8cb99237c8a485c",
+        "android_client_info": {
+          "package_name": "com.example.foodorder_application_1"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1018422104789-guolgp5m91mmi7s2qh1lfo6ftrj3nd8n.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAlPB3uU2w8e5XOKoXS_DQh-XwOHSCUTCs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1018422104789-guolgp5m91mmi7s2qh1lfo6ftrj3nd8n.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

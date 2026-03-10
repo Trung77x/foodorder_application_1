@@ -43,14 +43,31 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
           slivers: [
             // Header
             SliverAppBar(
-              expandedHeight: 80,
+              expandedHeight: 100,
               backgroundColor: Colors.orange.shade600,
               elevation: 0,
               pinned: true,
-              leading: IconButton(
-                icon: const Icon(Icons.arrow_back_ios_new, color: Colors.white),
-                onPressed: () => Navigator.pop(context),
+              leading: Padding(
+                padding: const EdgeInsets.only(left: 8),
+                child: IconButton(
+                  icon: const Icon(
+                    Icons.arrow_back_ios_new,
+                    color: Colors.white,
+                    size: 22,
+                  ),
+                  onPressed: () => Navigator.pop(context),
+                ),
               ),
+              title: const Text(
+                'Thanh Toán',
+                style: TextStyle(
+                  fontSize: 28,
+                  fontWeight: FontWeight.w800,
+                  color: Colors.white,
+                  letterSpacing: 0.5,
+                ),
+              ),
+              centerTitle: false,
               flexibleSpace: FlexibleSpaceBar(
                 background: Container(
                   decoration: BoxDecoration(
@@ -58,26 +75,6 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                       colors: [Colors.orange.shade400, Colors.orange.shade600],
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
-                    ),
-                  ),
-                  child: Padding(
-                    padding: EdgeInsets.fromLTRB(
-                      20,
-                      16 + MediaQuery.of(context).padding.top,
-                      20,
-                      16,
-                    ),
-                    child: const Align(
-                      alignment: Alignment.centerLeft,
-                      child: Text(
-                        'Thanh Toán',
-                        style: TextStyle(
-                          fontSize: 28,
-                          fontWeight: FontWeight.w800,
-                          color: Colors.white,
-                          letterSpacing: 0.5,
-                        ),
-                      ),
                     ),
                   ),
                 ),

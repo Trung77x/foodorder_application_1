@@ -1,35 +1,59 @@
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import '../models/order_model.dart';
 
 class OrderProvider extends ChangeNotifier {
-  List<OrderModel> _orders = [];
+  final List<OrderModel> _orders = [];
   bool _isLoading = false;
 
-  List<OrderModel> get orders => _orders;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+
+  List<OrderModel> get orders => List.unmodifiable(_orders);
   bool get isLoading => _isLoading;
 
-  OrderProvider() {
-    loadOrders();
-  }
-
-  Future<void> loadOrders() async {
+  // === Tải đơn hàng từ Firestore theo userId ===
+  Future<void> loadOrdersFromFirestore(String userId) async {
     _isLoading = true;
     notifyListeners();
 
     try {
-      await Future.delayed(const Duration(milliseconds: 500));
-      // Load orders from storage or API
-      _orders = [];
-      _isLoading = false;
-      notifyListeners();
+      final snapshot = await _firestore
+          .collection('orders')
+          .where('userId', isEqualTo: userId)
+          .orderBy('orderDate', descending: true)
+          .get();
+
+      _orders.clear();
+      for (final doc in snapshot.docs) {
+        _orders.add(OrderModel.fromJson(doc.data()));
+      }
     } catch (e) {
-      _isLoading = false;
-      notifyListeners();
+      // Firestore index chưa tạo — fallback không orderBy, sort thủ công
+      try {
+        final snapshot = await _firestore
+            .collection('orders')
+            .where('userId', isEqualTo: userId)
+            .get();
+        _orders.clear();
+        final loaded = snapshot.docs
+            .map((doc) => OrderModel.fromJson(doc.data()))
+            .toList();
+        loaded.sort((a, b) => b.orderDate.compareTo(a.orderDate));
+        _orders.addAll(loaded);
+      } catch (e2) {
+        debugPrint('Error loading orders from Firestore: $e2');
+      }
     }
+
+    _isLoading = false;
+    notifyListeners();
   }
 
   Future<bool> createOrder(OrderModel order) async {
     try {
+      // Lưu lên Firestore
+      await _firestore.collection('orders').doc(order.id).set(order.toJson());
+
       _orders.insert(0, order);
       notifyListeners();
       return true;
@@ -43,7 +67,7 @@ class OrderProvider extends ChangeNotifier {
       final index = _orders.indexWhere((o) => o.id == orderId);
       if (index >= 0) {
         final order = _orders[index];
-        _orders[index] = OrderModel(
+        final updatedOrder = OrderModel(
           id: order.id,
           userId: order.userId,
           items: order.items,
@@ -58,6 +82,13 @@ class OrderProvider extends ChangeNotifier {
           estimatedDelivery: order.estimatedDelivery,
           notes: order.notes,
         );
+
+        // Cập nhật trên Firestore
+        await _firestore.collection('orders').doc(orderId).update({
+          'status': status.toString().split('.').last,
+        });
+
+        _orders[index] = updatedOrder;
         notifyListeners();
         return true;
       }

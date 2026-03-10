@@ -440,6 +440,40 @@ class _CartScreenState extends State<CartScreen> {
       pinned: true,
       elevation: 0,
       backgroundColor: _primary,
+      title: Row(
+        children: [
+          const Icon(Icons.shopping_bag_rounded, color: Colors.white, size: 26),
+          const SizedBox(width: 10),
+          const Text(
+            'Giỏ Hàng',
+            style: TextStyle(
+              fontSize: 26,
+              fontWeight: FontWeight.w800,
+              color: Colors.white,
+              letterSpacing: -0.3,
+            ),
+          ),
+          if (count > 0) ...[
+            const SizedBox(width: 10),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
+              decoration: BoxDecoration(
+                color: Colors.white.withValues(alpha: 0.25),
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: Text(
+                '$count',
+                style: const TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w700,
+                  color: Colors.white,
+                ),
+              ),
+            ),
+          ],
+        ],
+      ),
+      centerTitle: false,
       flexibleSpace: FlexibleSpaceBar(
         background: Container(
           decoration: const BoxDecoration(
@@ -447,60 +481,6 @@ class _CartScreenState extends State<CartScreen> {
               colors: [Color(0xFFFF6B35), Color(0xFFFF8C42)],
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
-            ),
-          ),
-          child: Padding(
-            padding: EdgeInsets.fromLTRB(
-              24,
-              16 + MediaQuery.of(context).padding.top,
-              24,
-              16,
-            ),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.end,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    const Icon(
-                      Icons.shopping_bag_rounded,
-                      color: Colors.white,
-                      size: 28,
-                    ),
-                    const SizedBox(width: 10),
-                    const Text(
-                      'Giỏ Hàng',
-                      style: TextStyle(
-                        fontSize: 26,
-                        fontWeight: FontWeight.w800,
-                        color: Colors.white,
-                        letterSpacing: -0.3,
-                      ),
-                    ),
-                    if (count > 0) ...[
-                      const SizedBox(width: 10),
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 10,
-                          vertical: 3,
-                        ),
-                        decoration: BoxDecoration(
-                          color: Colors.white.withValues(alpha: 0.25),
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        child: Text(
-                          '$count',
-                          style: const TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w700,
-                            color: Colors.white,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ],
-                ),
-              ],
             ),
           ),
         ),

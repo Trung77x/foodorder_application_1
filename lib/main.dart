@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
 import 'providers/auth_provider.dart';
 import 'providers/cart_provider.dart';
 import 'providers/food_provider.dart';
@@ -8,8 +10,18 @@ import 'providers/order_provider.dart';
 import 'screens/auth/login_screen.dart';
 import 'screens/home/home_screen.dart';
 
-void main() {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  try {
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
+  } catch (e) {
+    // Ignore duplicate-app error on hot restart
+    if (!e.toString().contains('duplicate-app')) {
+      debugPrint('Firebase init error: $e');
+    }
+  }
   SystemChrome.setSystemUIOverlayStyle(
     const SystemUiOverlayStyle(
       statusBarColor: Colors.transparent,
@@ -341,16 +353,26 @@ class _SplashScreenState extends State<SplashScreen>
   }
 
   Future<void> _navigateToNextScreen() async {
-    await Future.delayed(const Duration(seconds: 2));
+    // Chờ animation splash tối thiểu 1.5s
+    await Future.delayed(const Duration(milliseconds: 1500));
 
-    if (mounted) {
-      final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    if (!mounted) return;
 
-      if (authProvider.isAuthenticated) {
-        Navigator.of(context).pushReplacementNamed('/home');
-      } else {
-        Navigator.of(context).pushReplacementNamed('/login');
-      }
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+
+    // Chờ auth load xong (tối đa 3s)
+    int waited = 0;
+    while (authProvider.isLoading && waited < 3000) {
+      await Future.delayed(const Duration(milliseconds: 100));
+      waited += 100;
+    }
+
+    if (!mounted) return;
+
+    if (authProvider.isAuthenticated) {
+      Navigator.of(context).pushReplacementNamed('/home');
+    } else {
+      Navigator.of(context).pushReplacementNamed('/login');
     }
   }
 

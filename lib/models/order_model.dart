@@ -47,22 +47,21 @@ class OrderModel {
       id: json['id'] ?? '',
       userId: json['userId'] ?? '',
       items:
-          (json['items'] as List?)
-              ?.map(
-                (e) => CartItemModel(
-                  id: e['id'] ?? '',
-                  food: FoodModel(
-                    id: e['foodId'] ?? '',
-                    name: e['name'] ?? '',
-                    description: e['description'] ?? '',
-                    price: (e['price'] ?? 0).toDouble(),
-                    image: e['image'] ?? '',
-                    category: e['category'] ?? '',
-                  ),
-                  quantity: e['quantity'] ?? 1,
-                ),
-              )
-              .toList() ??
+          (json['items'] as List?)?.map((e) {
+            final foodData = e['food'] as Map? ?? {};
+            return CartItemModel(
+              id: e['id'] ?? '',
+              food: FoodModel(
+                id: foodData['id'] ?? e['foodId'] ?? '',
+                name: foodData['name'] ?? e['name'] ?? '',
+                description: foodData['description'] ?? e['description'] ?? '',
+                price: ((foodData['price'] ?? e['price']) ?? 0).toDouble(),
+                image: foodData['image'] ?? e['image'] ?? '',
+                category: foodData['category'] ?? e['category'] ?? '',
+              ),
+              quantity: e['quantity'] ?? 1,
+            );
+          }).toList() ??
           [],
       subtotal: (json['subtotal'] ?? 0).toDouble(),
       deliveryFee: (json['deliveryFee'] ?? 0).toDouble(),
