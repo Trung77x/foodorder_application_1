@@ -485,8 +485,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                       ScaffoldMessenger.of(
                                         context,
                                       ).showSnackBar(
-                                        const SnackBar(
-                                          content: Text('Đăng ký thất bại'),
+                                        SnackBar(
+                                          content: Text(
+                                            authProvider.errorMessage ??
+                                                'Đăng ký thất bại',
+                                          ),
                                           backgroundColor: Colors.red,
                                         ),
                                       );

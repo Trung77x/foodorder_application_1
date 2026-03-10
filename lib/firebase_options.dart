@@ -30,10 +30,7 @@ class DefaultFirebaseOptions {
           'you can reconfigure this by running the FlutterFire CLI again.',
         );
       case TargetPlatform.windows:
-        throw UnsupportedError(
-          'DefaultFirebaseOptions have not been configured for windows - '
-          'you can reconfigure this by running the FlutterFire CLI again.',
-        );
+        return windows;
       case TargetPlatform.linux:
         throw UnsupportedError(
           'DefaultFirebaseOptions have not been configured for linux - '
@@ -79,5 +76,15 @@ class DefaultFirebaseOptions {
     iosClientId:
         '1018422104789-j10j61amn66ldmrvpgv7p22eta4qdh69.apps.googleusercontent.com',
     iosBundleId: 'com.example.foodorderApplication1',
+  );
+
+  static const FirebaseOptions windows = FirebaseOptions(
+    apiKey: 'AIzaSyAn7rEQU_alREGWMoindss6HGvQ1xsYsXI',
+    appId: '1:1018422104789:web:89baecb0c69c4a478a485c',
+    messagingSenderId: '1018422104789',
+    projectId: 'fooderapp-89436',
+    authDomain: 'fooderapp-89436.firebaseapp.com',
+    storageBucket: 'fooderapp-89436.firebasestorage.app',
+    measurementId: 'G-VQD2L8GFDK',
   );
 }

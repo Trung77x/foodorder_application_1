@@ -9,6 +9,7 @@ class AuthProvider extends ChangeNotifier {
   UserModel? _user;
   bool _isAuthenticated = false;
   bool _isLoading = false;
+  String? _errorMessage;
 
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
   final GoogleSignIn _googleSignIn = GoogleSignIn();
@@ -17,6 +18,44 @@ class AuthProvider extends ChangeNotifier {
   UserModel? get user => _user;
   bool get isAuthenticated => _isAuthenticated;
   bool get isLoading => _isLoading;
+  String? get errorMessage => _errorMessage;
+
+  String _parseFirebaseError(dynamic e) {
+    String code = '';
+    if (e is FirebaseAuthException) {
+      code = e.code;
+      debugPrint('FirebaseAuthException: code=${e.code}, message=${e.message}');
+    } else {
+      debugPrint('Auth error: $e');
+    }
+    switch (code) {
+      case 'email-already-in-use':
+        return 'Email này đã được sử dụng';
+      case 'weak-password':
+        return 'Mật khẩu phải có ít nhất 6 ký tự';
+      case 'invalid-email':
+        return 'Email không hợp lệ';
+      case 'user-not-found':
+        return 'Không tìm thấy tài khoản với email này';
+      case 'wrong-password':
+        return 'Sai mật khẩu';
+      case 'invalid-credential':
+        return 'Email hoặc mật khẩu không đúng';
+      case 'too-many-requests':
+        return 'Quá nhiều lần thử. Vui lòng thử lại sau';
+      case 'network-request-failed':
+        return 'Lỗi kết nối mạng';
+      case 'operation-not-allowed':
+        return 'Phương thức đăng nhập này chưa được bật trong Firebase Console';
+      case 'user-disabled':
+        return 'Tài khoản này đã bị vô hiệu hóa';
+      default:
+        if (e is FirebaseAuthException) {
+          return 'Lỗi đăng nhập: ${e.message ?? e.code}';
+        }
+        return 'Lỗi không xác định. Vui lòng thử lại';
+    }
+  }
 
   AuthProvider() {
     _checkAuthStatus();
@@ -35,15 +74,13 @@ class AuthProvider extends ChangeNotifier {
   // === Đọc user từ Firestore ===
   Future<UserModel?> _getUserFromDatabase(String userId) async {
     try {
-      final doc = await _firestore
-          .collection('users')
-          .doc(userId)
-          .get()
-          .timeout(const Duration(seconds: 5));
+      final doc = await _firestore.collection('users').doc(userId).get();
       if (doc.exists && doc.data() != null) {
         return UserModel.fromJson(doc.data()!);
       }
-    } catch (_) {}
+    } catch (e) {
+      debugPrint('getUserFromDatabase error: $e');
+    }
     return null;
   }
 
@@ -88,23 +125,28 @@ class AuthProvider extends ChangeNotifier {
       final firebaseUser = userCredential.user;
       if (firebaseUser == null) {
         _isLoading = false;
+        _errorMessage = 'Không thể xác thực tài khoản';
         notifyListeners();
         return false;
       }
 
-      // Đọc user từ Realtime Database
-      final dbUser = await _getUserFromDatabase(firebaseUser.uid);
-      _user =
-          dbUser ??
-          UserModel(
-            id: firebaseUser.uid,
-            name: firebaseUser.displayName ?? email.split('@').first,
-            email: email,
-            phone: '',
-            address: '',
-          );
+      // Firebase Auth thành công → xết user, Firestore lỗi không ảnh hưởng
+      _user = UserModel(
+        id: firebaseUser.uid,
+        name: firebaseUser.displayName ?? email.split('@').first,
+        email: email,
+        phone: '',
+        address: '',
+      );
 
-      await _saveUserToDatabase(_user!);
+      // Cố đọc từ Firestore (không bắt buộc)
+      try {
+        final dbUser = await _getUserFromDatabase(firebaseUser.uid);
+        if (dbUser != null) _user = dbUser;
+      } catch (_) {}
+
+      // Cố lưu lên Firestore (không bắt buộc)
+      _saveUserToDatabase(_user!);
 
       final prefs = await SharedPreferences.getInstance();
       await prefs.setString('userId', _user!.id);
@@ -114,10 +156,17 @@ class AuthProvider extends ChangeNotifier {
 
       _isAuthenticated = true;
       _isLoading = false;
+      _errorMessage = null;
       notifyListeners();
       return true;
+    } on FirebaseAuthException catch (e) {
+      _isLoading = false;
+      _errorMessage = _parseFirebaseError(e);
+      notifyListeners();
+      return false;
     } catch (e) {
       _isLoading = false;
+      _errorMessage = 'Lỗi không xác định: $e';
       notifyListeners();
       return false;
     }
@@ -140,10 +189,12 @@ class AuthProvider extends ChangeNotifier {
       final firebaseUser = userCredential.user;
       if (firebaseUser == null) {
         _isLoading = false;
+        _errorMessage = 'Không thể tạo tài khoản';
         notifyListeners();
         return false;
       }
 
+      // Firebase Auth thành công
       _user = UserModel(
         id: firebaseUser.uid,
         name: name,
@@ -152,8 +203,8 @@ class AuthProvider extends ChangeNotifier {
         address: '',
       );
 
-      // Lưu user lên Realtime Database
-      await _saveUserToDatabase(_user!);
+      // Cố lưu lên Firestore (không bắt buộc)
+      _saveUserToDatabase(_user!);
 
       final prefs = await SharedPreferences.getInstance();
       await prefs.setString('userId', _user!.id);
@@ -163,10 +214,17 @@ class AuthProvider extends ChangeNotifier {
 
       _isAuthenticated = true;
       _isLoading = false;
+      _errorMessage = null;
       notifyListeners();
       return true;
+    } on FirebaseAuthException catch (e) {
+      _isLoading = false;
+      _errorMessage = _parseFirebaseError(e);
+      notifyListeners();
+      return false;
     } catch (e) {
       _isLoading = false;
+      _errorMessage = 'Lỗi không xác định: $e';
       notifyListeners();
       return false;
     }

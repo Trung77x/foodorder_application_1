@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart'
+    show kIsWeb, defaultTargetPlatform, TargetPlatform;
 import 'package:provider/provider.dart';
 import '../../providers/auth_provider.dart';
 import 'signup_screen.dart';
@@ -329,8 +331,11 @@ class _LoginScreenState extends State<LoginScreen> {
                                       ScaffoldMessenger.of(
                                         context,
                                       ).showSnackBar(
-                                        const SnackBar(
-                                          content: Text('Đăng nhập thất bại'),
+                                        SnackBar(
+                                          content: Text(
+                                            authProvider.errorMessage ??
+                                                'Đăng nhập thất bại',
+                                          ),
                                           backgroundColor: Colors.red,
                                         ),
                                       );
@@ -392,64 +397,80 @@ class _LoginScreenState extends State<LoginScreen> {
                     // Google Sign-In button
                     Consumer<AuthProvider>(
                       builder: (context, authProvider, _) {
-                        return SizedBox(
-                          width: double.infinity,
-                          height: 56,
-                          child: OutlinedButton(
-                            style: OutlinedButton.styleFrom(
-                              backgroundColor: Colors.white,
-                              side: BorderSide.none,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(14),
+                        // Google Sign-In không hỗ trợ trên Windows desktop
+                        final isWindows =
+                            !kIsWeb &&
+                            defaultTargetPlatform == TargetPlatform.windows;
+
+                        return Tooltip(
+                          message: isWindows
+                              ? 'Google Sign-In không hỗ trợ trên Windows. Vui lòng dùng email/mật khẩu.'
+                              : '',
+                          child: SizedBox(
+                            width: double.infinity,
+                            height: 56,
+                            child: OutlinedButton(
+                              style: OutlinedButton.styleFrom(
+                                backgroundColor: isWindows
+                                    ? Colors.white.withValues(alpha: 0.4)
+                                    : Colors.white,
+                                side: BorderSide.none,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(14),
+                                ),
+                                elevation: isWindows ? 0 : 4,
+                                shadowColor: Colors.black26,
                               ),
-                              elevation: 4,
-                              shadowColor: Colors.black26,
-                            ),
-                            onPressed: authProvider.isLoading
-                                ? null
-                                : () async {
-                                    final result = await authProvider
-                                        .signInWithGoogle();
-                                    if (result && mounted) {
-                                      Navigator.of(
-                                        context,
-                                      ).pushReplacementNamed('/home');
-                                    } else if (mounted) {
-                                      ScaffoldMessenger.of(
-                                        context,
-                                      ).showSnackBar(
-                                        const SnackBar(
-                                          content: Text(
-                                            'Đăng nhập Google thất bại',
+                              onPressed: isWindows || authProvider.isLoading
+                                  ? null
+                                  : () async {
+                                      final result = await authProvider
+                                          .signInWithGoogle();
+                                      if (result && mounted) {
+                                        Navigator.of(
+                                          context,
+                                        ).pushReplacementNamed('/home');
+                                      } else if (mounted) {
+                                        ScaffoldMessenger.of(
+                                          context,
+                                        ).showSnackBar(
+                                          const SnackBar(
+                                            content: Text(
+                                              'Đăng nhập Google thất bại',
+                                            ),
+                                            backgroundColor: Colors.red,
                                           ),
-                                          backgroundColor: Colors.red,
-                                        ),
-                                      );
-                                    }
-                                  },
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Image.network(
-                                  'https://lh3.googleusercontent.com/COxitqgJr1sJnIDe8-jiKhxDx1FrYbtRHKJ9z_hELisAlapwE9LUPh6fcXif5f_E8sP0XcGAzu6GVj5Ak3a0yUyd=s24',
-                                  height: 24,
-                                  width: 24,
-                                  errorBuilder: (_, __, ___) => const Icon(
-                                    Icons.g_mobiledata_rounded,
-                                    size: 28,
-                                    color: Colors.red,
+                                        );
+                                      }
+                                    },
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Image.network(
+                                    'https://lh3.googleusercontent.com/COxitqgJr1sJnIDe8-jiKhxDx1FrYbtRHKJ9z_hELisAlapwE9LUPh6fcXif5f_E8sP0XcGAzu6GVj5Ak3a0yUyd=s24',
+                                    height: 24,
+                                    width: 24,
+                                    errorBuilder: (_, __, ___) => const Icon(
+                                      Icons.g_mobiledata_rounded,
+                                      size: 28,
+                                      color: Colors.red,
+                                    ),
                                   ),
-                                ),
-                                const SizedBox(width: 12),
-                                Text(
-                                  'Đăng nhập bằng Google',
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w600,
-                                    color: Colors.grey.shade700,
+                                  const SizedBox(width: 12),
+                                  Text(
+                                    isWindows
+                                        ? 'Google (không hỗ trợ trên Windows)'
+                                        : 'Đăng nhập bằng Google',
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w600,
+                                      color: isWindows
+                                          ? Colors.grey.shade400
+                                          : Colors.grey.shade700,
+                                    ),
                                   ),
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
                           ),
                         );
